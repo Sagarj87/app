@@ -1,0 +1,50 @@
+# Workspace-specific Coding Instructions
+# This is a Spring Boot backend project with JWT authentication and authorization.
+# Please generate code for User, Role entities, JWT utilities, authentication/authorization endpoints, and secure REST APIs as needed.
+
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+  # Enable all Spring Boot actuators
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: '*'
+    endpoint:
+      health:
+        show-details: always
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+
+aws:
+  s3:
+    bucket: ${S3_BUCKET_NAME:springboot-jwt-auth-uploads}
+  region: ${AWS_REGION:us-east-1}
+
+app:
+  file-upload:
+    max-size-bytes: 1048576
+
+logging:
+  file:
+    name: /app/logs/app.log
+  level:
+    root: INFO
+    com.example.springbootjwtauth: INFO

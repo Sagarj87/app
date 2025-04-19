@@ -1,0 +1,3 @@
+<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
+
+This is a Spring Boot backend project with JWT authentication and authorization. Please generate code for User, Role entities, JWT utilities, authentication/authorization endpoints, and secure REST APIs as needed.

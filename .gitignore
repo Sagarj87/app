@@ -1,0 +1,15 @@
+.vscode
+.target
+node_modules
+frontend/node_modules
+target
+*.log
+dist
+build
+.DS_Store
+.env
+.vscode
+.idea
+*.iml
+terraform/.terraform
+terraform/.terraform.lock.hcl
