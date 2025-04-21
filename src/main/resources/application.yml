@@ -41,6 +41,8 @@ aws:
 app:
   file-upload:
     max-size-bytes: 1048576
+  jwt:
+    secret: ${JWT_SECRET:your_default_secret_key_which_is_long_enough_for_hmac}
 
 logging:
   file:

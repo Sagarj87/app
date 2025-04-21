@@ -6,6 +6,8 @@ import com.example.springbootjwtauth.repository.RoleRepository;
 import com.example.springbootjwtauth.repository.UserRepository;
 import com.example.springbootjwtauth.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,32 +32,36 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody Map<String, String> userMap) {
-        String username = userMap.get("username");
-        String password = userMap.get("password");
-        if (userRepository.existsByUsername(username)) {
-            return Collections.singletonMap("error", "Username already exists");
+    public ResponseEntity<?> register(@RequestBody Map<String, String> userMap) {
+        try {
+            String username = userMap.get("username");
+            String password = userMap.get("password");
+            if (userRepository.existsByUsername(username)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
+            }
+            Role userRole = roleRepository.findByName("ROLE_USER")
+                    .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_USER", null)));
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setRoles(Collections.singleton(userRole));
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
         }
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_USER", null)));
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRoles(Collections.singleton(userRole));
-        userRepository.save(user);
-        return Collections.singletonMap("message", "User registered successfully");
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> userMap) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> userMap) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             userMap.get("username"), userMap.get("password")));
             String token = jwtUtil.generateToken(userMap.get("username"));
-            return Collections.singletonMap("token", token);
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
         } catch (AuthenticationException e) {
-            return Collections.singletonMap("error", "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
 }

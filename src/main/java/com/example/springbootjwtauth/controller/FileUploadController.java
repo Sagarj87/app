@@ -1,6 +1,7 @@
 package com.example.springbootjwtauth.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -59,10 +60,10 @@ public class FileUploadController {
             String key = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             String url = s3Service.uploadFile(key, file);
             logger.info("File uploaded successfully to S3: {}", url);
-            return ResponseEntity.created(URI.create(url)).body(url);
+            return ResponseEntity.status(HttpStatus.CREATED).body(url);
         } catch (Exception e) {
             logger.error("File upload failed: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body("Upload failed. Please try again later.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed. Please try again later.");
         }
     }
 }
